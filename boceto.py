@@ -40,6 +40,27 @@ class Pintador():
     def __eq__(self,otro):
         return self.ulti_azul == otro.ulti_azul and self.ulti_rojo == otro.ulti_rojo and self.pintados == otro.pintados
 
+def levanta_archivo(nombre):
+    archivo = open(nombre, "r") 
+    contenido = archivo.read()
+    contenido = contenido.split()
+    res = []
+    muestra = []
+    def insertar(muestra,contenido,cantidad_elementos,indice):
+        i = 0
+        while(i < cantidad_elementos):
+            muestra.append(int(contenido[indice+1]))
+            indice += 1
+            i+=1
+        return muestra
+    i = 0
+    while(i < len(contenido)):
+        insertar(muestra,contenido,int(contenido[int(i)]),i)
+        res.append(muestra)
+        muestra=[]
+        i += (int(contenido[i])+1) 
+    return res
+
 
 def potencial(arreglo,indice):
     numero = arreglo[indice]
@@ -53,22 +74,30 @@ def potencial(arreglo,indice):
                 mayores += 1
         indice+=1
     return max(mayores,menores)
-#arreglo = [3, 11, 0, 1, 3, 5, 2, 4, 1, 0, 9]
-#arreglo = [0,7,1,2,2,1,5,0]
-arreglo = [1]
-while(len(arreglo)< 20):
+#arreglos = [[3, 11, 0, 1, 3, 5, 2, 4, 1, 0, 9]]
+#arreglos = [[0,7,1,2,2,1,5,0]]
+arreglos = levanta_archivo("t16")
+print(len(arreglos))
+tiempo = timeit.default_timer()
+for arreglo in arreglos:
+   
     i = 0
     res = []
     while(i < len(arreglo)+1):
         res.append([])
         i+=1
     res[0] = [Pintador()]
-    tiempo = timeit.default_timer()
+    
     maxima_cant_pintados = 0
     posicion = 0
+    i = maxima_cant_pintados
     while posicion < len(arreglo):
-        i = min(maxima_cant_pintados,len(arreglo)-potencial(arreglo,posicion))
-        while(i >= 0 ):
+       
+        if  maxima_cant_pintados-  (len(arreglo)-posicion) > 0: 
+            cantidad_iteraciones = min(maxima_cant_pintados, maxima_cant_pintados -(len(arreglo)-posicion ))
+        else:
+            cantidad_iteraciones = maxima_cant_pintados
+        while(cantidad_iteraciones >= 0 ):
             k = 0
             pintados = []
             tamanio = len(res[i])
@@ -89,6 +118,7 @@ while(len(arreglo)< 20):
                     res[i+1].append(pintados[p])
                 p+=1
             i-=1
+            cantidad_iteraciones -=1
         posicion += 1
         if(len(res[i+1]) > 0 ):
             maxima_cant_pintados += 1
@@ -106,16 +136,11 @@ while(len(arreglo)< 20):
             break
         ultimo -=1
 
-
-    print(timeit.default_timer() - tiempo)
-
-
     cantidad = 0
     for elem in res:
         cantidad += len(elem)
     print(cantidad)
-    arreglo.append(len(arreglo)+1)
-
+print(timeit.default_timer() - tiempo)
 
 
 
